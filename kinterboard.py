@@ -29,6 +29,16 @@ class Players:
                             valid_moves.append((i, j, direction))
         return valid_moves
 
+    def get_valid_neutron_moves(self, board, is_valid_move):
+        """Return a list of valid moves for the neutron"""
+        valid_moves = []
+        for i in range(5):
+            for j in range(5):
+                if board[i][j] == "O":
+                    for direction in self.directions:
+                        if is_valid_move(i, j, direction):
+                            valid_moves.append((i, j, direction))
+        return valid_moves
 
 
 
@@ -70,7 +80,6 @@ class NeutronBoardd:
         self.winner_label = tk.Label(self.root, text='', font=("Helvetica", 16))
         self.winner_label.grid(row=10, column=0, columnspan=5)
         self.neutron_moved = False
-        self.current_player = None
         self.game_over = False
         self.current_piece = None
         self.buttons = []
@@ -78,6 +87,7 @@ class NeutronBoardd:
         self.create_directions_list()
         self.display_board()
         self.current_button = None
+        self.current_player = self.players[0]
         self.root.mainloop()
         
 
@@ -128,15 +138,16 @@ class NeutronBoardd:
         current_i, current_j = self.current_piece
         if self.is_valid_move(current_i, current_j, direction):
             self.move_piece(current_i, current_j, direction)
-            self.turn = (self.turn + 1) % 2
+            self.switch_players()
             self.display_board()
             self.current_piece = None
             if self.check_game_over():
                 self.game_over = True
                 self.winner_label.config(text=f"{self.players[self.turn].name} wins!")
                 self.move_button.config(state='disabled')
-            if self.players[self.turn].strategy == "Computer":
+            if self.current_player.strategy == "Computer":
                     self.computer_move()
+        
 
 
 
@@ -218,16 +229,17 @@ class NeutronBoardd:
         self.winner_label.config(text=message)
 
     def computer_move(self):
-        valid_moves = self.players[self.turn].get_valid_moves(self.board, self.is_valid_move)
-        if valid_moves:
-            move = random.choice(valid_moves)
-            self.move_piece(move[0],move[1],move[2])
-            self.turn += 1
-            self.display_board()
-        else:
-            self.game_over = True
-            self.winner_label.config(text="Player " + self.players[self.turn].name + " has no valid moves left")
-
+        # get valid moves for computer's piece
+        valid_piece_moves = self.players[1].get_valid_moves(self.board, self.is_valid_move)
+        if valid_piece_moves:
+            move = random.choice(valid_piece_moves)
+            self.move_piece(*move)
+        # get valid moves for computer's neutron
+        valid_neutron_moves = self.players[1].get_valid_neutron_moves(self.board, self.is_valid_move)
+        if valid_neutron_moves:
+            move = random.choice(valid_neutron_moves)
+            self.move_piece(*move)
+            self.switch_players()
 
 
 
@@ -252,23 +264,6 @@ class NeutronBoardd:
             return False
         return True
 
-    def make_move(self, move):
-        """Update the board after a move is made"""
-        if move:
-            x, y, direction = move
-            dx, dy = self.directions[direction]
-            self.board[x+dx][y+dy] = self.board[x][y]
-            self.board[x][y] = ' '
-            self.neutron_moved = self.neutron_moved or self.board[x+dx][y+dy] == 'N'
-            self.check_game_over()
-            self.current_player = self.players[self.turn % 2]
-            self.display_board()
-        else:
-            self.winner_label.config(text="Player " + self.current_player.name + " has no valid moves")
-            self.turn += 1
-            self.current_player = self.players[self.turn % 2]
-            self.display_board()
-
     def check_game_over(self):
         """Check if the game is over"""
         if self.neutron_moved:
@@ -279,3 +274,9 @@ class NeutronBoardd:
             self.game_over = all(['P' not in row for row in self.board])
             if self.game_over:
                 self.winner_label.config(text="Player " + self.players[(self.turn + 1) % 2].name + " wins!")
+
+    def switch_players(self):
+        """Switch the current player to the next player in the players list"""
+        current_index = self.players.index(self.current_player)
+        next_index = (current_index + 1) % len(self.players)
+        self.current_player = self.players[next_index]
