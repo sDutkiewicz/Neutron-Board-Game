@@ -106,7 +106,7 @@ class NeutronBoardd:
     def on_button_clicked(self, button):
         if self.game_over:
             return
-        if self.turn == 0 and button["text"] == "N":
+        if self.turn == 0 and button["text"] == "O":
             self.current_piece = (button.grid_info()["row"], button.grid_info()["column"])
             self.move_button.config(state='normal')
         elif self.players[self.turn].strategy == "Human" and button["text"] == self.players[self.turn].color:
