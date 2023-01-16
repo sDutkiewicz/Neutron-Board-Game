@@ -60,7 +60,8 @@ class NeutronBoardd:
         self.root = tk.Tk()
         self.root.config(bg='#ffc180')
         self.root.title("Neutron Board Game")
-        self.board = [['P', 'P', 'P', 'P', 'P'],
+        self.board =[
+                    ['P', 'P', 'P', 'P', 'P'],
                     [' ', ' ', ' ', ' ', ' '],
                     [' ', ' ', 'O', ' ', ' '],
                     [' ', ' ', ' ', ' ', ' '],
