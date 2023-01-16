@@ -80,7 +80,6 @@ class NeutronBoardd:
         self.winner_label = tk.Label(self.root, text='', font=("Helvetica", 16))
         self.winner_label.grid(row=10, column=0, columnspan=5)
         self.neutron_moved = False
-        self.game_over = False
         self.current_piece = None
         self.buttons = []
         self.create_buttons()
@@ -115,8 +114,6 @@ class NeutronBoardd:
         self.move_button.grid(row=6, column=0, columnspan=5)
 
     def on_button_clicked(self, button):
-        if self.game_over:
-            return
         if self.turn == 0 and button["text"] == "O":
             self.current_piece = (button.grid_info()["row"], button.grid_info()["column"])
             self.move_button.config(state='normal')
@@ -131,16 +128,11 @@ class NeutronBoardd:
         if not self.current_piece:
             return
         self.human_move()
+        self.display_board()
         self.move_count += 1
         if self.move_count == 2:
             self.move_count = 0
             self.computer_move()
-        if self.check_game_over():
-            self.game_over = True
-            self.winner_label.config(text=f"{self.players[self.turn].name} wins!")
-            self.move_button.config(state='disabled')
-        else:
-            self.winner_label.config(text="Invalid move")
 
 
     
@@ -207,7 +199,6 @@ class NeutronBoardd:
         return None
 
     def display_board(self):
-
         for i in range(5):
             for j in range(5):
                 self.buttons[i * 5 + j].config(text=self.board[i][j])
@@ -215,14 +206,6 @@ class NeutronBoardd:
     def update_player_label(self):
         """Update the current player label"""
         self.player_label.config(text=self.players[self.turn].name)
-
-    def show_winner(self, winner):
-        """Show the winner message"""
-        if winner == 'T':
-            message = "It's a Tie!"
-        else:
-            message = f"{winner} player wins!"
-        self.winner_label.config(text=message)
 
     def computer_move(self):
         # get valid moves for computer's piece
@@ -260,17 +243,6 @@ class NeutronBoardd:
             return False
         return True
 
-    def check_game_over(self):
-        """Check if the game is over"""
-        if self.neutron_moved:
-            self.game_over = all(['N' not in row for row in self.board])
-            if self.game_over:
-                self.winner_label.config(text="Player " + self.current_player.name + " wins!")
-        else:
-            self.game_over = all(['P' not in row for row in self.board])
-            if self.game_over:
-                self.winner_label.config(text="Player " + self.players[(self.turn + 1) % 2].name + " wins!")
-
     def switch_players(self):
         """Switch the current player to the next player in the players list"""
         current_index = self.players.index(self.current_player)
@@ -279,8 +251,6 @@ class NeutronBoardd:
 
 
     def human_move(self):
-        if self.game_over:
-            return
         if not self.current_piece:
             self.winner_label.config(text="Choose a piece to move")
             return
@@ -293,13 +263,22 @@ class NeutronBoardd:
                 return
             elif self.board[current_i][current_j] == "O":
                 self.move_piece(current_i, current_j, direction)
-                self.switch_players()
                 self.display_board()
                 self.current_piece = None
-                if self.check_game_over():
-                    self.game_over = True
-                    self.winner_label.config
-
+                if self.check_winner() is not None:
+                    if self.check_winner() == 'T':
+                        self.check_winner() == str(self.players[0].color)
+                        self.game_over(self.players[0].color)
+                    self.game_over(self.players[0].color)
+    
+    def game_over(self, piece):
+        """Check if the game is over"""
+        if piece == "N":
+            self.display_board()
+            self.winner_label.config(text="Player " + self.players[0].name + " wins!")
+        else:
+            self.display_board()
+            self.winner_label.config(text="Player " + self.players[1].name + " wins!")
 
 
 
