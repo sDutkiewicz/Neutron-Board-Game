@@ -88,6 +88,7 @@ class NeutronBoardd:
         self.display_board()
         self.current_button = None
         self.current_player = self.players[0]
+        self.move_count = 0
         self.root.mainloop()
         
 
@@ -126,28 +127,23 @@ class NeutronBoardd:
             self.current_piece = None
             self.move_button.config(state='disabled')
 
-
-
-
-
-
     def on_move_clicked(self):
         if not self.current_piece:
             return
-        direction = self.direction_var.get()
-        current_i, current_j = self.current_piece
-        if self.is_valid_move(current_i, current_j, direction):
-            self.move_piece(current_i, current_j, direction)
-            self.switch_players()
-            self.display_board()
-            self.current_piece = None
-            if self.check_game_over():
-                self.game_over = True
-                self.winner_label.config(text=f"{self.players[self.turn].name} wins!")
-                self.move_button.config(state='disabled')
-            if self.current_player.strategy == "Computer":
-                    self.computer_move()
-        
+        self.human_move()
+        self.move_count += 1
+        if self.move_count == 2:
+            self.move_count = 0
+            self.computer_move()
+        if self.check_game_over():
+            self.game_over = True
+            self.winner_label.config(text=f"{self.players[self.turn].name} wins!")
+            self.move_button.config(state='disabled')
+        else:
+            self.winner_label.config(text="Invalid move")
+
+
+    
 
 
 
@@ -171,12 +167,12 @@ class NeutronBoardd:
         if piece == ' ':
             print("No piece to move. Please select a valid piece.")
             return False
-        elif piece == 'O':
-            if self.neutron_moved:
-                print(
-                    "The neutron has already been moved this turn. Please select a different piece.")
-                return False
-            self.neutron_moved = True
+        # elif piece == 'O':
+        #     if self.neutron_moved:
+        #         print(
+        #             "The neutron has already been moved this turn. Please select a different piece.")
+        #         return False
+        #     self.neutron_moved = True
         # elif piece != self.players[self.turn]:
         #     print("You cannot move your opponent's pieces.")
         #     return False
@@ -280,3 +276,36 @@ class NeutronBoardd:
         current_index = self.players.index(self.current_player)
         next_index = (current_index + 1) % len(self.players)
         self.current_player = self.players[next_index]
+
+
+    def human_move(self):
+        if self.game_over:
+            return
+        if not self.current_piece:
+            self.winner_label.config(text="Choose a piece to move")
+            return
+        direction = self.direction_var.get()
+        current_i, current_j = self.current_piece
+        if self.is_valid_move(current_i, current_j, direction):
+            if self.board[current_i][current_j] == "N":
+                self.move_piece(current_i, current_j, direction)
+                self.winner_label.config(text="Choose a neutron to move")
+                return
+            elif self.board[current_i][current_j] == "O":
+                self.move_piece(current_i, current_j, direction)
+                self.switch_players()
+                self.display_board()
+                self.current_piece = None
+                if self.check_game_over():
+                    self.game_over = True
+                    self.winner_label.config
+
+
+
+
+
+
+    def get_clicked_piece(self):
+        for button in self.buttons:
+            if button["state"] == "active":
+                return (button.grid_info()["row"], button.grid_info()["column"])
