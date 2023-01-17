@@ -1,59 +1,8 @@
 import tkinter as tk
 import random
-
-
-class Players:
-    def __init__(self, name: str, color: str, strategy: str):
-        self.name = name
-        self.color = color
-        self.strategy = strategy
-        self.directions = {
-            'up': (-1, 0),
-            'down': (1, 0),
-            'left': (0, -1),
-            'right': (0, 1),
-            'up-right': (-1, 1),
-            'up-left': (-1, -1),
-            'down-right': (1, 1),
-            'down-left': (1, -1)
-        }
-
-    def get_valid_moves(self, board, is_valid_move):
-        """Return a list of valid moves for the player"""
-        valid_moves = []
-        for i in range(5):
-            for j in range(5):
-                if board[i][j] == self.color:
-                    for direction in self.directions:
-                        if is_valid_move(i, j, direction):
-                            valid_moves.append((i, j, direction))
-        return valid_moves
-
-    def get_valid_neutron_moves(self, board, is_valid_move):
-        """Return a list of valid moves for the neutron"""
-        valid_moves = []
-        for i in range(5):
-            for j in range(5):
-                if board[i][j] == "O":
-                    for direction in self.directions:
-                        if is_valid_move(i, j, direction):
-                            valid_moves.append((i, j, direction))
-        return valid_moves
-
-
-
-    def get_move(self, board, current_player):
-        """Get the next move for the player"""
-        if current_player == self and self.strategy == "Human":
-            return None  # Return None to indicate that the move should be prompted from the player
-        elif current_player == self and self.strategy == "Computer":
-            valid_moves = self.get_valid_moves(board)
-            if valid_moves:
-                return random.choice(valid_moves)
-            else:
-                return None  # Return None to indicate that the player has no valid moves
-
-
+import tkinter.simpledialog as simpledialog
+from kinterplayer import Players
+import tkinter.messagebox as messagebox
 
 class NeutronBoardd:
     def __init__(self):
@@ -66,7 +15,8 @@ class NeutronBoardd:
                     [' ', ' ', 'O', ' ', ' '],
                     [' ', ' ', ' ', ' ', ' '],
                     ['N', 'N', 'N', 'N', 'N']]
-        self.players = [Players("Player1", "N", "Human"), Players("Computer", "P", "Computer")]
+        self.computer_strategy = str(self.get_computer_strategy())
+        self.players = [Players("Player1", "N", "Human"), Players("Computer", "P", self.computer_strategy)]
         self.turn = 0
         self.directions = {
             'up': (-1, 0),
@@ -90,8 +40,14 @@ class NeutronBoardd:
         self.current_player = self.players[0]
         self.move_count = 0
         self.root.mainloop()
-        
-
+    
+    def get_computer_strategy(self):
+        while True:
+            strategy = simpledialog.askstring("Computer Strategy", "Enter the strategy for the computer player (random/smart):")
+            if strategy.lower() == "random" or strategy.lower() == "smart":
+                return strategy
+            else:
+                messagebox.showerror("Error", "Invalid input. Please enter either 'random' or 'smart'.")
     def create_buttons(self):
         for i in range(5):
             for j in range(5):

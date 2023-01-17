@@ -1,8 +1,5 @@
-from kinterboard import NeutronBoardd, Players
-
-class Game:
-    def __init__(self):
-        self.board = NeutronBoardd()
+from kinterboard import NeutronBoardd
 
 
-game = Game()
+if __name__ == "__main__":
+    board = NeutronBoardd()
