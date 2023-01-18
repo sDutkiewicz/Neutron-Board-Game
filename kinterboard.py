@@ -15,7 +15,7 @@ class NeutronBoardd:
                     [' ', ' ', 'O', ' ', ' '],
                     [' ', ' ', ' ', ' ', ' '],
                     ['N', 'N', 'N', 'N', 'N']]
-        self.computer_strategy = str(self.get_computer_strategy())
+        self.computer_strategy = self.get_computer_strategy()
         self.players = [Players("Player1", "N", "Human"), Players("Computer", "P", self.computer_strategy)]
         self.turn = 0
         self.directions = {
@@ -39,13 +39,15 @@ class NeutronBoardd:
         self.current_button = None
         self.current_player = self.players[0]
         self.move_count = 0
+        self.first_move = None
         self.root.mainloop()
     
     def get_computer_strategy(self):
         while True:
             strategy = simpledialog.askstring("Computer Strategy", "Enter the strategy for the computer player (random/smart):")
-            if strategy.lower() == "random" or strategy.lower() == "smart":
+            if strategy == "random" or strategy == "smart":
                 return strategy
+                break
             else:
                 messagebox.showerror("Error", "Invalid input. Please enter either 'random' or 'smart'.")
     def create_buttons(self):
@@ -84,19 +86,18 @@ class NeutronBoardd:
     def on_move_clicked(self):
         if not self.current_piece:
             return
-        self.human_move()
-        self.display_board()
-        self.move_count += 1
-        if self.move_count == 2:
-            self.move_count = 0
-            self.computer_move()
-
-
-    
-
-
-
-
+            
+        if self.first_move is None:
+            self.human_move()
+            self.computter_move()
+            self.first_move = True
+        else:
+            self.human_move()
+            self.display_board()
+            self.move_count += 1
+            if self.move_count == 2:
+                self.move_count = 0
+                self.computter_move()
 
 
     def find_neutron(self):
@@ -106,25 +107,9 @@ class NeutronBoardd:
                     return i, j
 
     def move_piece(self, row, col, direction):
-        try:
-            row_offset, col_offset = self.directions[direction]
-        except KeyError:
-            print("Invalid direction. Please try again.")
-            return False
+        row_offset, col_offset = self.directions[direction]
 
         piece = self.board[row][col]
-        if piece == ' ':
-            print("No piece to move. Please select a valid piece.")
-            return False
-        # elif piece == 'O':
-        #     if self.neutron_moved:
-        #         print(
-        #             "The neutron has already been moved this turn. Please select a different piece.")
-        #         return False
-        #     self.neutron_moved = True
-        # elif piece != self.players[self.turn]:
-        #     print("You cannot move your opponent's pieces.")
-        #     return False
 
         new_row = row + row_offset
         new_col = col + col_offset
@@ -160,9 +145,6 @@ class NeutronBoardd:
             for j in range(5):
                 self.buttons[i * 5 + j].config(text=self.board[i][j])
 
-    def update_player_label(self):
-        """Update the current player label"""
-        self.player_label.config(text=self.players[self.turn].name)
 
     def computer_move(self):
         # get valid moves for computer's piece
@@ -200,11 +182,11 @@ class NeutronBoardd:
             return False
         return True
 
-    def switch_players(self):
-        """Switch the current player to the next player in the players list"""
-        current_index = self.players.index(self.current_player)
-        next_index = (current_index + 1) % len(self.players)
-        self.current_player = self.players[next_index]
+    # def switch_players(self):
+    #     """Switch the current player to the next player in the players list"""
+    #     current_index = self.players.index(self.current_player)
+    #     next_index = (current_index + 1) % len(self.players)
+    #     self.current_player = self.players[next_index]
 
 
     def human_move(self):
@@ -216,7 +198,6 @@ class NeutronBoardd:
         if self.is_valid_move(current_i, current_j, direction):
             if self.board[current_i][current_j] == "N":
                 self.move_piece(current_i, current_j, direction)
-                self.winner_label.config(text="Choose a neutron to move")
                 return
             elif self.board[current_i][current_j] == "O":
                 self.move_piece(current_i, current_j, direction)
@@ -245,3 +226,12 @@ class NeutronBoardd:
         for button in self.buttons:
             if button["state"] == "active":
                 return (button.grid_info()["row"], button.grid_info()["column"])
+
+
+    def computter_move(self):
+        piece_move = self.players[1].get_computer_move(self.board)
+        if piece_move:
+            self.move_piece(*piece_move)
+        neutron_move = self.players[1].get_computer_move(self.board)
+        if neutron_move:
+            self.move_piece(*neutron_move)
