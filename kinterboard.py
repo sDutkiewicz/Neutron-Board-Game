@@ -3,6 +3,7 @@ import random
 import tkinter.simpledialog as simpledialog
 from kinterplayer import Players
 import tkinter.messagebox as messagebox
+from tkinter import DISABLED
 
 class NeutronBoardd:
     def __init__(self):
@@ -182,13 +183,6 @@ class NeutronBoardd:
             return False
         return True
 
-    # def switch_players(self):
-    #     """Switch the current player to the next player in the players list"""
-    #     current_index = self.players.index(self.current_player)
-    #     next_index = (current_index + 1) % len(self.players)
-    #     self.current_player = self.players[next_index]
-
-
     def human_move(self):
         if not self.current_piece:
             self.winner_label.config(text="Choose a piece to move")
@@ -218,6 +212,13 @@ class NeutronBoardd:
             self.display_board()
             self.winner_label.config(text="Player " + self.players[1].name + " wins!")
 
+        # Disable the move button
+        self.move_button.config(state=DISABLED)
+
+        # Unbind the <Button-1> event from the board
+        self.board_canvas.unbind("<Button-1>")
+
+
 
 
 
@@ -232,6 +233,6 @@ class NeutronBoardd:
         piece_move = self.players[1].get_computer_move(self.board)
         if piece_move:
             self.move_piece(*piece_move)
-        neutron_move = self.players[1].get_computer_move(self.board)
+        neutron_move = self.players[1].get_computer_move_neutron(self.board)
         if neutron_move:
             self.move_piece(*neutron_move)
