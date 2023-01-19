@@ -48,15 +48,13 @@ class NeutronBoardd:
             strategy = simpledialog.askstring("Computer Strategy", "Enter the strategy for the computer player (random/smart):")
             if strategy == "random" or strategy == "smart":
                 return strategy
-                break
             else:
                 messagebox.showerror("Error", "Invalid input. Please enter either 'random' or 'smart'.")
     def create_buttons(self):
         for i in range(5):
             for j in range(5):
                 button = tk.Button(self.root, text='', width=5, height=2)
-                button.config(
-                    command=lambda button=button: self.on_button_clicked(button))
+                button.config(command=lambda button=button: self.on_button_clicked(button))
                 button.grid(row=i, column=j)
                 self.buttons.append(button)
         exit_button = tk.Button(self.root, text='Exit',
@@ -74,15 +72,20 @@ class NeutronBoardd:
         self.move_button.grid(row=6, column=0, columnspan=5)
 
     def on_button_clicked(self, button):
-        if self.turn == 0 and button["text"] == "O":
-            self.current_piece = (button.grid_info()["row"], button.grid_info()["column"])
-            self.move_button.config(state='normal')
-        elif self.players[self.turn].strategy == "Human" and button["text"] == self.players[self.turn].color:
-            self.current_piece = (button.grid_info()["row"], button.grid_info()["column"])
-            self.move_button.config(state='normal')
+        if self.neutron_moved == True:
+            if button["text"] == "O":
+                self.current_piece = (button.grid_info()["row"], button.grid_info()["column"])
+                self.move_button.config(state='normal')
+            else:
+                self.current_piece = None
+                self.move_button.config(state='disabled')
         else:
-            self.current_piece = None
-            self.move_button.config(state='disabled')
+            if button["text"] == "N":
+                self.current_piece = (button.grid_info()["row"], button.grid_info()["column"])
+                self.move_button.config(state='normal')
+            else:
+                self.current_piece = None
+                self.move_button.config(state='disabled')
 
     def on_move_clicked(self):
         if not self.current_piece:
@@ -90,6 +93,7 @@ class NeutronBoardd:
             
         if self.first_move is None:
             self.human_move()
+            self.neutron_moved == True
             self.computter_move()
             self.first_move = True
         else:
@@ -158,19 +162,7 @@ class NeutronBoardd:
         if valid_neutron_moves:
             move = random.choice(valid_neutron_moves)
             self.move_piece(*move)
-            self.switch_players()
 
-
-
-    def get_legal_moves(self):
-        legal_moves = []
-        for i in range(5):
-            for j in range(5):
-                if self.board[i][j] == self.players[self.turn].color:
-                    for direction in self.directions.values():
-                        if self.is_valid_move(i, j, direction):
-                            legal_moves.append((i, j))
-        return legal_moves
 
     def is_valid_move(self, current_i: int, current_j: int, direction: str):
         """Check if a move is valid"""
@@ -189,19 +181,16 @@ class NeutronBoardd:
             return
         direction = self.direction_var.get()
         current_i, current_j = self.current_piece
-        if self.is_valid_move(current_i, current_j, direction):
-            if self.board[current_i][current_j] == "N":
-                self.move_piece(current_i, current_j, direction)
-                return
-            elif self.board[current_i][current_j] == "O":
-                self.move_piece(current_i, current_j, direction)
-                self.display_board()
-                self.current_piece = None
-                if self.check_winner() is not None:
-                    if self.check_winner() == 'T':
-                        self.check_winner() == str(self.players[0].color)
-                        self.game_over(self.players[0].color)
-                    self.game_over(self.players[0].color)
+        self.move_piece(current_i, current_j, direction)
+        self.display_board()
+        self.switch_neutron_moved()
+        self.current_piece = None
+        if self.check_winner() is not None:
+            if self.check_winner() == 'T':
+                self.check_winner() == str(self.players[0].color)
+                self.game_over(self.players[0].color)
+            self.game_over(self.players[0].color)
+
     
     def game_over(self, piece):
         """Check if the game is over"""
@@ -236,3 +225,6 @@ class NeutronBoardd:
         neutron_move = self.players[1].get_computer_move_neutron(self.board)
         if neutron_move:
             self.move_piece(*neutron_move)
+
+    def switch_neutron_moved(self):
+        self.neutron_moved = not self.neutron_moved
