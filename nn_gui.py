@@ -142,7 +142,7 @@ class NeutronBoardGUI(NeutronBoard):
 
     def display_board(self):
         """
-        Displays the current situation on the board
+        Display the current state of the game board on the GUI
         """
         for i in range(5):
             for j in range(5):
@@ -158,7 +158,10 @@ class NeutronBoardGUI(NeutronBoard):
 
     def game_over(self, piece):
         """
-        Display the current state of the game board on the GUI
+        Displays game over message and winner on the GUI
+
+        Args:
+            winner (str): The winner of the game. 'N' for player1, 'P' for player2, 'T' for tie
         """
         if piece == "N":
             self.display_board()
