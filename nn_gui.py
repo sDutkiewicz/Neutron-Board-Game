@@ -10,8 +10,10 @@ class NeutronBoardGUI(NeutronBoard):
     def __init__(self):
         super().__init__()
         self.root = tk.Tk()
-        self.root.config(bg='#ffc180')
+        self.root.config(bg='gray')
         self.root.title("Neutron Board Game")
+        self.computer_strategy = self.get_computer_strategy()
+        self.players = [Players("Player1", "N", "Human"), Players("Computer", "P", self.computer_strategy)]
         self.winner_label = tk.Label(self.root, text='', font=("Helvetica", 16))
         self.winner_label.grid(row=10, column=0, columnspan=5)
         self.buttons = []
@@ -19,6 +21,16 @@ class NeutronBoardGUI(NeutronBoard):
         self.create_directions_list()
         self.display_board()
         self.root.mainloop()
+
+
+    
+    def get_computer_strategy(self):
+        while True:
+            strategy = simpledialog.askstring("Computer Strategy", "Enter the strategy for the computer player (random/smart):")
+            if strategy == "random" or strategy == "smart":
+                return strategy
+            else:
+                messagebox.showerror("Error", "Invalid input. Please enter either 'random' or 'smart'.")
 
     def create_directions_list(self):
         self.direction_var = tk.StringVar(self.root)
@@ -32,24 +44,29 @@ class NeutronBoardGUI(NeutronBoard):
     
     def create_buttons(self):
         for i in range(5):
+            self.root.grid_columnconfigure(i, weight=1, pad=15)
+            self.root.grid_rowconfigure(i, weight=1, pad=15)
             for j in range(5):
                 button = tk.Button(self.root, width=5, height=2)
-                button.grid(row=i, column=j)
-                self.buttons.append(button)
-                
+                button.grid(row=i, column=j, padx=2, pady=2)
+
                 # Set button background color
-                button.config(bg='white')
+                button.config(bg='gray')
+
+                button.config(command=lambda button=button: self.on_button_clicked(button))
                 
-                # Add a border to the button
-                button.config(relief='solid', bd=1)
+                if (i+j) % 2 == 0:
+                    button.config(bg='white')
+                else:
+                    button.config(bg='green')
                 
                 # Change font and font color of button text
                 button.config(font=("Helvetica", 12), fg='black')
-        
+                self.buttons.append(button)
         # Add exit button
         exit_button = tk.Button(self.root, text='Exit', command=self.root.destroy)
-        exit_button.grid(row=5, column=5)
-
+        exit_button.grid(row=5, column=5, padx=2, pady=2)
+        exit_button.place(x=425, y=356)
 
     def on_button_clicked(self, button):
         if self.neutron_moved == True:
@@ -88,13 +105,13 @@ class NeutronBoardGUI(NeutronBoard):
         for i in range(5):
             for j in range(5):
                 if self.board[i][j] == 'P':
-                    self.buttons[i * 5 + j].config(bg='#ff0000')
+                    self.buttons[i * 5 + j]
                 elif self.board[i][j] == 'N':
-                    self.buttons[i * 5 + j].config(bg='#0000ff')
+                    self.buttons[i * 5 + j]
                 elif self.board[i][j] == 'O':
-                    self.buttons[i * 5 + j].config(bg='#00ff00')
+                    self.buttons[i * 5 + j]
                 else:
-                    self.buttons[i * 5 + j].config(bg='#ffffff')
+                    self.buttons[i * 5 + j]
                 self.buttons[i * 5 + j].config(text=self.board[i][j])
 
 

@@ -13,8 +13,6 @@ class NeutronBoard:
                     [' ', ' ', 'O', ' ', ' '],
                     [' ', ' ', ' ', ' ', ' '],
                     ['N', 'N', 'N', 'N', 'N']]
-        self.computer_strategy = self.get_computer_strategy()
-        self.players = [Players("Player1", "N", "Human"), Players("Computer", "P", self.computer_strategy)]
         self.directions = {
             'up': (-1, 0),
             'down': (1, 0),
@@ -30,15 +28,6 @@ class NeutronBoard:
         self.move_count = 0
         self.first_move = None
     
-    def get_computer_strategy(self):
-        while True:
-            strategy = simpledialog.askstring("Computer Strategy", "Enter the strategy for the computer player (random/smart):")
-            if strategy == "random" or strategy == "smart":
-                return strategy
-            else:
-                messagebox.showerror("Error", "Invalid input. Please enter either 'random' or 'smart'.")
-
-
 
     def find_neutron(self):
         for i, row in enumerate(self.board):
@@ -47,6 +36,9 @@ class NeutronBoard:
                     return i, j
 
     def move_piece(self, row, col, direction):
+
+        if not self.valid_move(row, col, direction):
+            return
         row_offset, col_offset = self.directions[direction]
 
         piece = self.board[row][col]
@@ -106,12 +98,19 @@ class NeutronBoard:
         return True
 
     def human_move(self):
-        if not self.current_piece:
+        if  self.neutron_moved == True:
             self.winner_label.config(text="Choose a piece to move")
-            return
-        direction = self.direction_var.get()
-        current_i, current_j = self.current_piece
-        self.move_piece(current_i, current_j, direction)
+        else:
+            self.winner_label.config(text="Choose neutron, pick direction and click move")
+        valid_move = False
+        while not valid_move:
+            direction = self.direction_var.get()
+            current_i, current_j = self.current_piece
+            if self.valid_move(current_i, current_j, direction):
+                self.move_piece(current_i, current_j, direction)
+                valid_move = True
+            else:
+                self.winner_label.config(text="Invalid move, please try again")
         self.display_board()
         self.switch_neutron_moved()
         self.current_piece = None
@@ -150,3 +149,11 @@ class NeutronBoard:
 
     def switch_neutron_moved(self):
         self.neutron_moved = not self.neutron_moved
+
+    def valid_move(self, row, col, direction):
+        row_offset, col_offset = self.directions[direction]
+        new_row = row + row_offset
+        new_col = col + col_offset
+        if not (0 <= new_row < 5) or not (0 <= new_col < 5) or self.board[new_row][new_col] != ' ':
+            return False
+        return True
