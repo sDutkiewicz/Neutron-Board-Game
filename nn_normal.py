@@ -37,26 +37,6 @@ class NeutronBoard:
                 return strategy
             else:
                 messagebox.showerror("Error", "Invalid input. Please enter either 'random' or 'smart'.")
-    def create_buttons(self):
-        for i in range(5):
-            for j in range(5):
-                button = tk.Button(self.root, text='', width=5, height=2)
-                button.config(command=lambda button=button: self.on_button_clicked(button))
-                button.grid(row=i, column=j)
-                self.buttons.append(button)
-        exit_button = tk.Button(self.root, text='Exit',
-                                command=self.root.destroy)
-        exit_button.grid(row=5, column=5)
-
-    def create_directions_list(self):
-        self.direction_var = tk.StringVar(self.root)
-        self.direction_var.set(list(self.directions.keys())[0])
-        self.direction_list = tk.OptionMenu(
-            self.root, self.direction_var, *list(self.directions.keys()))
-        self.direction_list.grid(row=5, column=0, columnspan=5)
-        self.move_button = tk.Button(
-            self.root, text='Move', command=self.on_move_clicked)
-        self.move_button.grid(row=6, column=0, columnspan=5)
 
 
 
@@ -99,11 +79,6 @@ class NeutronBoard:
                 return 'T'  # tie
             return 'P' if self.current_player == 'N' else 'N'
         return None
-
-    def display_board(self):
-        for i in range(5):
-            for j in range(5):
-                self.buttons[i * 5 + j].config(text=self.board[i][j])
 
 
     def computer_move(self):
