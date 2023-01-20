@@ -1,5 +1,6 @@
-from kinterplayer import Players
+from player import Players
 import random
+
 
 def test_get_computer_move(monkeypatch):
     monkeypatch.setattr(random, 'choice', lambda x: 'down')
@@ -10,6 +11,7 @@ def test_get_computer_move(monkeypatch):
              [' ', ' ', ' ', ' ', ' '],
              ['N', 'N', 'N', 'N', 'N']]
     assert player.get_computer_move(board) == 'down'
+
 
 def test_get_computer_move_neutron(monkeypatch):
     monkeypatch.setattr(random, 'choice', lambda x: 'down')
@@ -29,18 +31,21 @@ def test_get_valid_moves():
              [' ', ' ', 'O', ' ', ' '],
              [' ', ' ', ' ', ' ', ' '],
              ['N', 'N', 'N', 'N', 'N']]
-    assert player.get_valid_moves(board, player.is_valid_move) == [(0, 0, 'down'), (0, 0, 'right'), (0, 0, 'down-right')]
+    assert player.get_valid_moves(board, player.is_valid_move) == [
+        (0, 0, 'down'), (0, 0, 'right'), (0, 0, 'down-right')]
+
 
 def test_is_valid_move():
     player = Players("player", "P", "random")
-    board = [   ['P', ' ', ' ', ' ', ' '],
-                [' ', ' ', ' ', ' ', ' '],
-                [' ', ' ', 'O', ' ', ' '],
-                [' ', ' ', ' ', ' ', ' '],
-                ['N', 'N', 'N', 'N', 'N']]
-    assert player.is_valid_move(board, 0, 0, 'down') == True
-    assert player.is_valid_move(board, 0, 0, 'up') == False
-    assert player.is_valid_move(board, 2, 2, 'left') == True
+    board = [['P', ' ', ' ', ' ', ' '],
+             [' ', ' ', ' ', ' ', ' '],
+             [' ', ' ', 'O', ' ', ' '],
+             [' ', ' ', ' ', ' ', ' '],
+             ['N', 'N', 'N', 'N', 'N']]
+    assert player.is_valid_move(board, 0, 0, 'down') is True
+    assert player.is_valid_move(board, 0, 0, 'up') is False
+    assert player.is_valid_move(board, 2, 2, 'left') is True
+
 
 def test_smart_move_piece():
     player = Players("player", "P", "smart")
@@ -49,7 +54,8 @@ def test_smart_move_piece():
              [' ', ' ', ' ', ' ', ' '],
              ['O', ' ', ' ', 'P', ' '],
              ['N', 'N', 'N', 'N', 'N']]
-    assert player.smart_move_piece(board, 2, 2, player.get_valid_moves) == (1, 2, 'up')
+    assert player.smart_move_piece(
+        board, 2, 2, player.get_valid_moves) == (1, 2, 'up')
 
 
 def test_find_neutron():
@@ -65,7 +71,8 @@ def test_find_neutron():
              [' ', ' ', ' ', ' ', ' '],
              [' ', ' ', ' ', ' ', ' '],
              ['N', 'N', 'N', 'N', 'N']]
-    assert player.find_neutron(board) == None
+    assert player.find_neutron(board) is None
+
 
 def test_smart_move_neutron():
     player = Players("player", "P", "smart")
