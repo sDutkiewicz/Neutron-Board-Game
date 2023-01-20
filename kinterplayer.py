@@ -5,7 +5,6 @@ class Players:
         self.name = name
         self.color = color
         self.strategy = strategy
-        # self.board = self.bar()
         self.directions = {
             'up': (-1, 0),
             'down': (1, 0),
