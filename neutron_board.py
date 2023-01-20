@@ -1,4 +1,4 @@
-# Stanisław Dutkiewicz
+#Stanislaw Dutkiewicz 329076
 class NeutronBoard:
     """
     The NeutronBoard class represents the game board for the Neutron game.

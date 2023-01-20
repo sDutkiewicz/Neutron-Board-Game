@@ -1,3 +1,4 @@
+#Stanislaw Dutkiewicz 329076
 import tkinter as tk
 import tkinter.simpledialog as simpledialog
 from player import Players

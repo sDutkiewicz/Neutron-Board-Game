@@ -1,3 +1,4 @@
+#Stanislaw Dutkiewicz 329076
 from board_gui import NeutronBoardGUI
 
 

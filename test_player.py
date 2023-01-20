@@ -1,3 +1,4 @@
+#Stanislaw Dutkiewicz 329076
 from player import Players
 import random
 
