@@ -78,7 +78,7 @@ class Players:
         if self.strategy == "random":
             neutron_moves = self.get_valid_neutron_moves(board, self.is_valid_neutron_move)
             
-            #If there are valid moves, choose one at random
+            # If there are valid moves, choose one at random
             if neutron_moves:
                 return random.choice(neutron_moves)
             else:
@@ -174,18 +174,21 @@ class Players:
 
     def smart_move_piece(self, board, neutron_row, neutron_col, get_valid_moves):
         """
-        Find the best move for a piece according to the following heuristic:
-        Move the piece that is closest to the wall and that can be moved to a position 
-        that is closer to the neutron.
+        
+        This method uses the strategy 'smart' which is to move 
+        the piece that is closest to the neutron in the direction 
+        that has the shortest distance to a wall.
 
         Args:
             board (list): 2D list representing the current state of the game board
-            neutron_row (int): The row of the neutron on the board.
-            neutron_col (int): The column of the neutron on the board.
-            get_valid_moves_func: A function that returns a list of valid moves for a player.
+            neutron_row (int): the row of the neutron on the board
+            neutron_col (int): the column of the neutron on the board
+            get_valid_moves (function): a function returns a list of valid moves.
 
         Returns:
-            Tuple[int, int, str]: The best move for the piece, in the form of (row, col, direction).
+            tuple: A tuple containing the row, column and direction 
+            of the best move for the player or False if no
+            move is possible.
         """
         # Find the coordinates of all the player's pieces
         piece_coords = []
@@ -228,9 +231,18 @@ class Players:
         return False
 
     def smart_move_neutron(self, board, row, col):
-        '''
-        Move the neutron at position (row, col) to a position that brings it closer to the opponent's pieces
-        '''
+        """
+        Determines the best move for the neutron based on the computer's strategy.
+
+        Args:
+            board (list): 2D list representing the current state of the game board
+            row (int): row of the neutron
+            col (int): column of the neutron
+
+        Returns:
+            tuple: A tuple containing the row, column and direction of the best move 
+            for the computer player to move neutron or or False if no move is possible.
+        """
         directions = self.directions.keys()
         distances = self.distance_to_opponent(board, row, col)
 
@@ -241,7 +253,7 @@ class Players:
         for direction in directions:
             if (row, col, direction) in valid_moves:
                 return row, col, direction
-        return None
+        return False
 
 
     def is_valid_neutron_move(self, board, row, col, direction):

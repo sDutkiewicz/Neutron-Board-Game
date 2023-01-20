@@ -7,7 +7,22 @@ class NeutronBoard:
         """
         Initialize the game board, the directions for moving pieces, and other
         variables such as neutron_moved, current_piece, and move_count.
-        """
+
+        Args:
+            board (list): The game board represented as a 2D list, with 'P' representing player pieces,
+            'N' representing neutron, 'O' representing obstacle, and ' ' representing empty spaces.
+            
+            directions (dict): A dictionary containing the possible directions for moving pieces on the board,
+            with keys as the direction strings ('up', 'down', 'left', 'right', etc.)
+                            
+            neutron_moved (bool): A flag that indicates whether the neutron has been moved in the current turn.
+            
+            current_piece (str): The current piece that the player is trying to move.
+            
+            move_count (int): The number of moves that have been made in the current game.
+            
+            first_move (tuple): Used to create initiate the start move from the player.
+    """
         self.board =[
                     ['P', 'P', 'P', 'P', 'P'],
                     [' ', ' ', ' ', ' ', ' '],
@@ -44,7 +59,13 @@ class NeutronBoard:
 
     def move_piece(self, row, col, direction):
         """
-        Move a piece in the specified direction on the board.
+        Move a piece on the current game board to a new position in the specified direction.
+        Args:
+            row (int): current row of the piece to be moved
+            col (int): current column of the piece to be moved
+            direction (str): direction in which the piece is to be moved
+        Returns:
+            bool: True if the move is successful, False otherwise
         """
         # Check if the move is valid
         if not self.valid_move(row, col, direction):
@@ -93,13 +114,19 @@ class NeutronBoard:
             if (self.board[i-1][j] != 'N' and self.board[i+1][j] != 'N' and
                     self.board[i][j-1] != 'N' and self.board[i][j+1] != 'N'):
                 return 'T'
-            return 'P' if self.current_player == 'N' else 'N'
+            return 'P' if self.players[0].color == 'N' else 'N'
         return None
 
 
     def is_valid_move(self, current_i: int, current_j: int, direction: str):
         """
         Check if a move is valid
+        Args:
+            current_i (int): current row of the piece to be moved
+            current_j (int): current column of the piece to be moved
+            direction (str): direction in which the piece is to be moved
+        Returns:
+            bool: True if move is valid, False otherwise
         """
 
         # Check if the direction is a valid key in self.directions
@@ -159,7 +186,7 @@ class NeutronBoard:
         The move is determined by using the function from PLayers class.
 
         Returns:
-        bool: True if a valid move was made, False otherwise.
+            bool: True if a valid move was made, False otherwise.
         """
         # Moves the neutron
         neutron_move = self.players[1].get_computer_move_neutron(self.board)

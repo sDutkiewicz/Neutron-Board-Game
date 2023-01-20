@@ -3,6 +3,7 @@ import tkinter.simpledialog as simpledialog
 from kinterplayer import Players
 import tkinter.messagebox as messagebox
 from tkinter import DISABLED
+from tkinter import PhotoImage
 
 from nn_normal import NeutronBoard
 
@@ -17,6 +18,7 @@ class NeutronBoardGUI(NeutronBoard):
         setting up the game board and player objects.
         """
         super().__init__()
+
         self.root = tk.Tk()
         self.root.config(bg='gray')
         self.root.title("Neutron Board Game")
@@ -30,6 +32,7 @@ class NeutronBoardGUI(NeutronBoard):
         self.display_board()
         self.winner_label.config(text="Welcome! Please start by moving your piece")
         self.root.mainloop()
+
 
 
     
@@ -61,38 +64,33 @@ class NeutronBoardGUI(NeutronBoard):
         self.move_button.grid(row=6, column=0, columnspan=5)
     
     def create_buttons(self):
-        """
-        Creates the buttons for the game board and adds them to the Tkinter root window
-        """
         for i in range(5):
-            self.root.grid_columnconfigure(i, weight=1, pad=15)
-            self.root.grid_rowconfigure(i, weight=1, pad=15)
+            self.root.grid_columnconfigure(i, weight=1)
+            self.root.grid_rowconfigure(i, weight=1)
             for j in range(5):
                 button = tk.Button(self.root, width=5, height=2)
-                button.grid(row=i, column=j, padx=2, pady=2)
-
-                # Set button background color
-                button.config(bg='gray')
-
+                button.grid(row=i, column=j, padx=0, pady=0)
+                button.config(bd=3, relief='solid', bg='black')
                 button.config(command=lambda button=button: self.on_button_clicked(button))
-                
                 if (i+j) % 2 == 0:
                     button.config(bg='white')
                 else:
                     button.config(bg='green')
-                
                 # Change font and font color of button text
                 button.config(font=("Helvetica", 12), fg='black')
                 self.buttons.append(button)
+        
         # Add exit button
-        exit_button = tk.Button(self.root, text='Exit', command=self.root.destroy)
+        exit_button = tk.Button(self.root, text='Exit', command=self.on_exit_clicked)
         exit_button.grid(row=5, column=5, padx=2, pady=2)
-        exit_button.place(x=425, y=356)
-
+        exit_button.place(x=350, y=280)
+        
     def on_button_clicked(self, button):
         """
         Event handler for when a game board button is clicked.
         """
+
+        # allows user only to click neutron and it has to move neutron
         if self.neutron_moved == True:
             if button["text"] == "O":
                 self.current_piece = (button.grid_info()["row"], button.grid_info()["column"])
@@ -120,41 +118,59 @@ class NeutronBoardGUI(NeutronBoard):
             else:
                 self.winner_label.config(text="Invalid move, try again")
                 return False
+
             self.computer_move()
             self.first_move = True
+            self.winner_label.config(text="Please pick neutron and move")
         else:
             
+
             # Moving neutron and then piece
             if self.human_move() == True:
                 self.switch_neutron_moved()
             else:
                 self.winner_label.config(text="Invalid move, try again")
                 return False
+
+            # When the finishes the loop ends
+            if self.game_over('N') == True:
+                return True
             
             # Ensuring that human will move piece and neutron at his turn
             self.move_count += 1
             
             if self.move_count == 2:
                 self.move_count = 0
-                self.computter_move()
+                self.computer_move()
+
+            # When the finishes the loop ends
+            if self.game_over('P') == True:
+                return True
         
+        if self.neutron_moved == False:
+            self.winner_label.config(text="Please pick oyur piece and move")
+        else:
+            self.winner_label.config(text="Please pick neutron and move")
+
         self.display_board()
 
     def display_board(self):
         """
         Display the current state of the game board on the GUI
         """
+        white_pawn_image = PhotoImage(file="White_piece.png").subsample(4,4)
+        black_pawn_image = PhotoImage(file="Black_piece.png").subsample(4,4)
+        neutron_image = PhotoImage(file="Neutron_Pic.png").subsample(4,4)
         for i in range(5):
             for j in range(5):
-                if self.board[i][j] == 'P':
-                    self.buttons[i * 5 + j]
+                button = self.buttons[i * 5 + j]
+                button.config(image='') # Clear any previous image
+                if self.board[i][j] == 'N':
+                    button.config(image=neutron_image)
+                elif self.board[i][j] == 'P':
+                    button.config(image=black_pawn_image)
                 elif self.board[i][j] == 'N':
-                    self.buttons[i * 5 + j]
-                elif self.board[i][j] == 'O':
-                    self.buttons[i * 5 + j]
-                else:
-                    self.buttons[i * 5 + j]
-                self.buttons[i * 5 + j].config(text=self.board[i][j])
+                    button.config(image=white_pawn_image)
 
     def game_over(self, piece):
         """
@@ -173,6 +189,16 @@ class NeutronBoardGUI(NeutronBoard):
         # Disable the move button
         self.move_button.config(state=DISABLED)
 
+        # Disable all buttons on the board
+        for button in self.buttons:
+            button.config(state=DISABLED)
+        
+        return True
+
+    def on_exit_clicked(self):
+        """
+        Handle the event when the Exit button is clicked
+        """
+        if messagebox.askyesno("Exit", "Are you sure you want to exit the game?"):
+            self.root.destroy()
     
-if __name__ == "__main__":
-    board = NeutronBoardGUI()
