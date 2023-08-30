@@ -26,6 +26,13 @@ class NeutronBoardGUI(NeutronBoard):
         self.root = tk.Tk()
         self.root.config(bg='gray')
         self.root.title("Neutron Board Game")
+        self.root.geometry("350x400")
+        self.root.resizable(False, False)
+        autograph_label = tk.Label(self.root, text="Created by Stanislaw Dutkiewicz", bg='gray', fg='white', font=("Helvetica", 10))
+        autograph_label.grid(row=11, column=0, columnspan=5, pady=10)
+        
+        self.setup_menu()
+
         self.computer_strategy = self.get_computer_strategy()
         self.players = [Players("Human", "N", "Human"), Players(
             "Computer", "P", self.computer_strategy)]
@@ -74,13 +81,13 @@ class NeutronBoardGUI(NeutronBoard):
     def create_buttons(self):
         for i in range(5):
             self.root.grid_columnconfigure(i, weight=1)
-            self.root.grid_rowconfigure(i, weight=1)
+            self.root.grid_rowconfigure(i, weight=1, minsize=40)  # Setting a minimum size for the row
             for j in range(5):
-                button = tk.Button(self.root, width=5, height=2)
-                button.grid(row=i, column=j, padx=0, pady=0)
+                button = tk.Button(self.root, width=5, height=2)  # Using text units for width and height
+                button.grid(row=i, column=j, padx=0, pady=0, sticky='nsew')  # Ensuring the button stretches to fill the cell
                 button.config(bd=3, relief='solid', bg='black')
                 button.config(
-                    command=lambda button=button: self.on_button_clicked(button))  # noqa: E501
+                    command=lambda button=button: self.on_button_clicked(button))
                 if (i+j) % 2 == 0:
                     button.config(bg='white')
                 else:
@@ -94,6 +101,7 @@ class NeutronBoardGUI(NeutronBoard):
                                 command=self.on_exit_clicked)
         exit_button.grid(row=5, column=5, padx=2, pady=2)
         exit_button.place(x=350, y=280)
+
 
     def on_button_clicked(self, button):
         """
@@ -160,20 +168,16 @@ class NeutronBoardGUI(NeutronBoard):
         self.display_board()
 
     def display_board(self):
-        """
-        Display the current state of the game board on the GUI
-        """
+        """Display the current state of the game board on the GUI"""
         for i in range(5):
             for j in range(5):
-                if self.board[i][j] == 'P':
-                    self.buttons[i * 5 + j]
-                elif self.board[i][j] == 'N':
-                    self.buttons[i * 5 + j]
-                elif self.board[i][j] == 'O':
-                    self.buttons[i * 5 + j]
-                else:
-                    self.buttons[i * 5 + j]
-                self.buttons[i * 5 + j].config(text=self.board[i][j])
+                button = self.buttons[i * 5 + j]
+                button["text"] = self.board[i][j]
+                button.config(width=5, height=2, bd=3, relief='solid')
+
+
+
+
 
     def game_over(self, piece):
         """
@@ -214,3 +218,28 @@ class NeutronBoardGUI(NeutronBoard):
         """
         if messagebox.askyesno("Exit", "Are you sure you want to exit the game?"):  # noqa: E501
             self.root.destroy()
+
+    def setup_menu(self):
+        """
+        Set up the main menu for the game window.
+        """
+        self.menu = tk.Menu(self.root)
+        self.root.config(menu=self.menu)
+
+        # Create "Help" submenu
+        help_menu = tk.Menu(self.menu)
+        self.menu.add_cascade(label="Help", menu=help_menu)
+        help_menu.add_command(label="Credits", command=self.show_credits)
+
+
+
+    def show_credits(self):
+        """
+        Display a popup window with the game credits.
+        """
+        credits_window = tk.Toplevel(self.root)
+        credits_window.title("Credits")
+        tk.Label(credits_window, text="Neutron Board Game", font=("Helvetica", 16)).pack(pady=10)
+        tk.Label(credits_window, text="Created by Stanislaw Dutkiewicz - 329076", font=("Helvetica", 12)).pack(pady=10)
+        tk.Button(credits_window, text="Close", command=credits_window.destroy).pack(pady=10)
+
