@@ -6,6 +6,8 @@ import tkinter.messagebox as messagebox
 from tkinter import DISABLED
 
 from neutron_board import NeutronBoard
+import sys
+import os
 
 
 class NeutronBoardGUI(NeutronBoard):
@@ -231,6 +233,9 @@ class NeutronBoardGUI(NeutronBoard):
         self.menu.add_cascade(label="Help", menu=help_menu)
         help_menu.add_command(label="Credits", command=self.show_credits)
 
+         # Add "License" option
+        help_menu.add_command(label="License", command=self.show_license)
+
 
 
     def show_credits(self):
@@ -242,4 +247,33 @@ class NeutronBoardGUI(NeutronBoard):
         tk.Label(credits_window, text="Neutron Board Game", font=("Helvetica", 16)).pack(pady=10)
         tk.Label(credits_window, text="Created by Stanislaw Dutkiewicz - 329076", font=("Helvetica", 12)).pack(pady=10)
         tk.Button(credits_window, text="Close", command=credits_window.destroy).pack(pady=10)
+
+    def get_license_path(self):
+        if getattr(sys, 'frozen', False):
+            # If the application is run as a bundle/exe
+            return os.path.join(sys._MEIPASS, 'LICENSE')
+        else:
+            # If the application is run from a script
+            return os.path.join(os.path.dirname(os.path.abspath(__file__)), 'LICENSE')
+
+    def show_license(self):
+        """
+        Display a window with the full license text.
+        """
+        license_window = tk.Toplevel(self.root)
+        license_window.title("License")
+        
+        # Assuming the license text is stored in a file named LICENSE.txt
+        with open(self.get_license_path(), "r") as file:
+            license_text = file.read()
+
+        
+        # Display the license text in a scrollable Text widget
+        text_widget = tk.Text(license_window, wrap=tk.WORD, height=20, width=50)
+        text_widget.insert(tk.END, license_text)
+        text_widget.pack(padx=10, pady=10)
+        
+        # Add a close button
+        tk.Button(license_window, text="Close", command=license_window.destroy).pack(pady=10)
+
 
