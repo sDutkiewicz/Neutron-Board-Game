@@ -71,7 +71,7 @@ pytest test_player.py
 
 ## Documentation
 
-For a detailed understanding of the game mechanics, rules, and implementation details, refer to the `Dokumentacja.pdf` or `Documentation_En.md` (in English) document provided with the project.
+For a detailed understanding of the game mechanics, rules, and implementation details, refer to the [Dokumentacja.pdf](Dokumentacja.pdf) or [Documentation_En](Documentation_en.md) (in English) document provided with the project.
 
 ## License
 
