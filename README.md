@@ -1,6 +1,22 @@
 
 # Neutron Board Game
 
+## Table of Contents
+- [Overview](#overview)
+- [Features](#features)
+- [Getting Started](#getting-started)
+  - [Prerequisites](#prerequisites)
+  - [Running the Game](#running-the-game)
+- [Project Structure](#project-structure)
+- [Testing](#testing)
+- [Documentation](#documentation)
+- [License](#license)
+- [Author](#author)
+- [Screenshots](#screenshots)
+
+## Screenshots
+![alt text](gallery/preview.png)
+
 ## Overview
 This project was made during my studies at Warsaw University of Technology.
 
@@ -8,17 +24,17 @@ The Neutron Board Game is a turn-based strategic board game implemented in Pytho
 
 ## Features
 
-- **Graphical User Interface (GUI)**: Built using Tkinter, the game offers a visually appealing board and intuitive interactions.
-- **Player Mechanics**: Players can be either human or computer-controlled. Computer players can follow different strategies, such as random or smart moves.
-- **Game Rules**: Manage the state and rules of the board, ensuring valid moves and tracking game progress.
+- 🎨 **Graphical User Interface (GUI)**: Built using Tkinter, the game offers a visually appealing board and intuitive interactions.
+- 🤖 **Player Mechanics**: Players can be either human or computer-controlled. Computer players can follow different strategies, such as random or smart moves.
+- 📜 **Game Rules**: Manage the state and rules of the board, ensuring valid moves and tracking game progress. [link](https://en.wikipedia.org/wiki/Neutron_(game))
 
 ## Getting Started
 
 ### Prerequisites
 
-- Python 3.x
-- Tkinter (usually comes bundled with Python)
-- pytest (for running tests)
+- 🐍 Python 3.x
+- 📦 Tkinter (usually comes bundled with Python)
+- ✅ pytest (for running tests)
 
 ### Running the Game
 
@@ -27,14 +43,22 @@ To start the game, simply run the `main.py` script:
 ```
 python main.py
 ```
+Alternatively, it is possible to launch the game by the .exe file placed in 'dist' directory
 
 ## Project Structure
-
-- `main.py`: The main entry point of the game.
-- `board_gui.py`: Defines the GUI components of the game.
-- `neutron_board.py`: Contains the game's logic and board representation.
-- `player.py`: Defines player mechanics and strategies.
-- `test_board.py` & `test_player.py`: Contain unit tests for the board and player functionalities, respectively.
+```plaintext
+Neutron-Board-Game/
+├── .dist/                          # Directory with exe file  
+├── .tests/                         # Directory with tests
+├── .gallery/                       # Directory with pictures
+├── board_gui.py                    # Defines the GUI components of the game
+├── neutron_board.py                # Contains the game's logic and board representation
+├── player.py                       # Defines player mechanics and strategies
+├── main.py                         # The main entry point of the game
+├── Documentation_En.md
+├── Documentacja.pdf                # Documentation in polish 
+└── LICENSE                         # License file
+```
 
 ## Testing
 
@@ -47,7 +71,7 @@ pytest test_player.py
 
 ## Documentation
 
-For a detailed understanding of the game mechanics, rules, and implementation details, refer to the `Dokumentacja.pdf` or `Documentation_En.md` (in english) document provided with the project.
+For a detailed understanding of the game mechanics, rules, and implementation details, refer to the `Dokumentacja.pdf` or `Documentation_En.md` (in English) document provided with the project.
 
 ## License
 
@@ -57,7 +81,5 @@ For the full license text, refer to the `LICENSE` file included in the project r
 
 ---
 
-**Author**: Stanislaw Dutkiewicz 329076
-
----
-
+## Author
+Stanislaw Dutkiewicz 329076
